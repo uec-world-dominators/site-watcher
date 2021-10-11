@@ -5,7 +5,7 @@ from watchcat.resource.resource import Resource
 
 class HttpResource(Resource):
     def __init__(
-        self, title: str, url: str,
+        self, title: str, url: str, enabled: bool = True,
     ):
         """init
 
@@ -16,7 +16,7 @@ class HttpResource(Resource):
         url : str
             URL
         """
-        self.title = title
+        super().__init__(title, enabled=enabled)
         self.url = url
 
     def get(self):
