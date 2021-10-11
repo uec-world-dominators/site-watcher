@@ -9,6 +9,7 @@ import watchcat.__main__
 import watchcat.info
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
+from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
 
@@ -18,7 +19,12 @@ class Test(unittest.TestCase):
         watchcat.__main__.main()
 
     def test_http_resource(self):
-        pass
+        http_resource = HttpResource("Google", None, "https://www.google.com")
+        http_resource.get()
+
+    def test_command_resource(self):
+        command_resource = CommandResource("echo", None, "echo $var", env={"var": "hoge"})
+        assert command_resource.get() == "hoge\n"
 
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
