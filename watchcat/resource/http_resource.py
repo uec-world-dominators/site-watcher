@@ -20,6 +20,18 @@ class HttpResource(Resource):
         self.url = url
 
     def get(self):
+        """url先のhtmlテキストを取得
+
+        Returns
+        -------
+        str
+            htmlテキスト
+
+        Raises
+        ------
+        GetError
+            取得エラー
+        """
         response = requests.get(self.url)
         if response.status_code == 200:
             text = response.text
