@@ -3,12 +3,14 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import unittest
+import time
 
 import watchcat.__main__
 import watchcat.info
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.http_resource import HttpResource
+from watchcat.snapshot import Snapshot
 
 
 class Test(unittest.TestCase):
@@ -30,6 +32,9 @@ class Test(unittest.TestCase):
             f"[test_command_notifier] this is test message from {watchcat.info.name}"
         )
         assert ret == 0
+
+    def test_create_snapshot(self):
+        Snapshot("test", time.time(), "this is content")
 
 
 if __name__ == "__main__":
