@@ -1,0 +1,19 @@
+import sys
+from watchcat.notifier.errors import NotificationError
+from .notifier import Notifier
+import requests
+
+
+class SlackWebhookNotifier(Notifier):
+    def __init__(self, webhook_url: str) -> None:
+        self.webhook_url = webhook_url
+
+    def send(self, message: str):
+        res = requests.post(self.webhook_url, json={
+            'text': message,
+        })
+        if res.status_code == 200:
+            return
+        else:
+            print(res.text, file=sys.stderr)
+            raise NotificationError()
