@@ -10,9 +10,12 @@ class SlackWebhookNotifier(Notifier):
         self.webhook_url = webhook_url
 
     def send(self, message: str):
-        res = requests.post(self.webhook_url, json={
-            'text': message,
-        })
+        res = requests.post(
+            self.webhook_url,
+            json={
+                "text": message,
+            },
+        )
         if res.status_code == 200:
             return
         else:
