@@ -1,11 +1,12 @@
 import requests
+from watchcat.notifier.notifier import Notifier
 from watchcat.resource.errors import GetError
 from watchcat.resource.resource import Resource
 
 
 class HttpResource(Resource):
     def __init__(
-        self, title: str, url: str, enabled: bool = True,
+        self, title: str, notifier: Notifier, url: str, enabled: bool = True,
     ):
         """init
 
@@ -13,10 +14,14 @@ class HttpResource(Resource):
         ----------
         title : str
             タイトル
+        notifier : Notifier
+            通知元
         url : str
             URL
+        enabled : bool, optional
+            有効かどうか, by default True
         """
-        super().__init__(title, enabled=enabled)
+        super().__init__(title, notifier, enabled)
         self.url = url
 
     def get(self):
