@@ -16,7 +16,8 @@ class Test(unittest.TestCase):
         watchcat.__main__.main()
 
     def test_http_resource(self):
-        pass
+        http_resource = HttpResource("Google", "https://www.google.com")
+        http_resource.get()
 
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
