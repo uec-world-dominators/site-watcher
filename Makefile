@@ -1,4 +1,7 @@
-sdist: clean
+test:
+	python3 tests/main.py
+
+sdist: clean test
 	python3 setup.py sdist
 
 publish: sdist
