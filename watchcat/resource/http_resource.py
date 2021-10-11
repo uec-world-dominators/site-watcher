@@ -12,7 +12,7 @@ class HttpResource(Resource):
         Parameters
         ----------
         title : str
-            サイト名
+            タイトル
         url : str
             URL
         """
