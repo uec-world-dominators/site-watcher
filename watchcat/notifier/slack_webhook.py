@@ -21,3 +21,6 @@ class SlackWebhookNotifier(Notifier):
         else:
             print(res.text, file=sys.stderr)
             raise NotificationError()
+
+    def __repr__(self) -> str:
+        return f"<SlackWebhookNotifier(webhook_url={self.webhook_url})>"

@@ -17,3 +17,6 @@ class CommandNotifier(Notifier):
             },
         )
         return process.returncode
+
+    def __repr__(self) -> str:
+        return f"<CommandNotifier(command={self.command})>"
