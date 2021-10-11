@@ -1,4 +1,5 @@
 import requests
+from watchcat.resource.errors import GetError
 from watchcat.resource.resource import Resource
 
 
@@ -24,5 +25,4 @@ class HttpResource(Resource):
             text = response.text
             return text
         else:
-            raise
-        return text
+            raise GetError()
