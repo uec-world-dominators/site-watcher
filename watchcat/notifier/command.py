@@ -3,7 +3,8 @@ from .notifier import Notifier
 
 
 class CommandNotifier(Notifier):
-    def __init__(self, command: str) -> None:
+    def __init__(self, _id: str, command: str) -> None:
+        super().__init__(_id)
         self.command = command
 
     def send(self, message: str):

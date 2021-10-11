@@ -5,7 +5,8 @@ import requests
 
 
 class SlackWebhookNotifier(Notifier):
-    def __init__(self, webhook_url: str) -> None:
+    def __init__(self, _id: str, webhook_url: str) -> None:
+        super().__init__(_id)
         self.webhook_url = webhook_url
 
     def send(self, message: str):
