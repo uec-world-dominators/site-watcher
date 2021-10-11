@@ -7,7 +7,7 @@ class CommandNotifier(Notifier):
         self.command = command
 
     def send(self, message: str):
-        subprocess.run(
+        process = subprocess.run(
             self.command,
             shell=True,
             check=True,
@@ -15,3 +15,4 @@ class CommandNotifier(Notifier):
                 "message": message,
             },
         )
+        return process.returncode

@@ -22,7 +22,10 @@ class Test(unittest.TestCase):
     def test_command_notifier(self):
         command = "echo $message"
         notifier = CommandNotifier(command=command)
-        notifier.send(f"[test_command_notifier] this is test message from {watchcat.info.name}")
+        ret = notifier.send(
+            f"[test_command_notifier] this is test message from {watchcat.info.name}"
+        )
+        assert ret == 0
 
 
 if __name__ == "__main__":
