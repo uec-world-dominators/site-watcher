@@ -58,15 +58,18 @@ class ConfigLoader:
             self.resources = list()
 
     def _get_notifier(self, notifier_id: Union[str, None]) -> Notifier:
-        if not self.notifiers:
-            raise ConfigLoadError("You need to set `notifiers`")
-        if notifier_id:
-            return self.notifiers[notifier_id]
-        else:
-            if self.default_notifier:
-                return self.notifiers[self.default_notifier]
+        try:
+            if not self.notifiers:
+                raise ConfigLoadError("You need to set `notifiers`")
+            if notifier_id:
+                return self.notifiers[notifier_id]
             else:
-                raise ConfigLoadError("You need to set `default_notifier`")
+                if self.default_notifier:
+                    return self.notifiers[self.default_notifier]
+                else:
+                    raise ConfigLoadError("You need to set `default_notifier`")
+        except KeyError as e:
+            raise ConfigLoadError(f"No such notifier: {e}")
 
     def _load_notifiers(self, notifiers_config: Dict[str, Dict]) -> Dict[str, Notifier]:
         if not isinstance(notifiers_config, dict):
@@ -86,13 +89,18 @@ class ConfigLoader:
                 f"`notifiers.{notifier_id}` must be dict: {notifier_config}"
             )
 
-        notifier_type = notifier_config["type"]
-        if notifier_type == "slack":
-            webhook_url = notifier_config["webhook"]
-            return SlackWebhookNotifier(notifier_id, webhook_url)
-        elif notifier_type == "cmd":
-            command = notifier_config["cmd"]
-            return CommandNotifier(notifier_id, command)
+        try:
+            notifier_type = notifier_config["type"]
+            if notifier_type == "slack":
+                webhook_url = notifier_config["webhook"]
+                return SlackWebhookNotifier(notifier_id, webhook_url)
+            elif notifier_type == "cmd":
+                command = notifier_config["cmd"]
+                return CommandNotifier(notifier_id, command)
+        except KeyError as e:
+            raise ConfigLoadError(
+                f"KeyError on loading notifier: {notifier_id}, key: {e}"
+            )
 
     def _load_resources(self, resources_config: List[Dict[str, str]]) -> List[Resource]:
         if not isinstance(resources_config, list):
@@ -116,14 +124,18 @@ class ConfigLoader:
             template = self._get_template(template_id)
             resource_config = recursive_update(copy.deepcopy(template), resource_config)
 
-        title = resource_config["title"]
-        url = resource_config.get("url")
-        enabled = resource_config.get("enabled", True)
-        notifier_id = resource_config.get("notifier")
-        notifier = self._get_notifier(notifier_id)
-        env = resource_config.get("env")
-        cmd = resource_config.get("cmd")
-
+        try:
+            title = resource_config["title"]
+            url = resource_config.get("url")
+            enabled = resource_config.get("enabled", True)
+            notifier_id = resource_config.get("notifier")
+            notifier = self._get_notifier(notifier_id)
+            env = resource_config.get("env")
+            cmd = resource_config.get("cmd")
+        except KeyError as e:
+            raise ConfigLoadError(
+                f"KeyError on loading resource: {resource_config}, key: {e}"
+            )
         if not ((url != None) ^ ((cmd or env) != None)):
             raise ConfigLoadError(
                 f"we couldn't determine resource type: {resource_config}"
@@ -149,7 +161,10 @@ class ConfigLoader:
 
     def _get_template(self, template_id: str) -> Dict[str, Dict]:
         if self.templates:
-            return self.templates[template_id]
+            try:
+                return self.templates[template_id]
+            except KeyError:
+                raise ConfigLoadError(f"No such template: {template_id}")
         else:
             raise ConfigLoadError("You need to set `templates`")
 
