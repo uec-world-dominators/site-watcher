@@ -11,7 +11,7 @@ on:
   pull_request:
     branches: [ master ]
     paths:
-      - '**.py''
+      - '**.py'
 
 jobs:
   build:
