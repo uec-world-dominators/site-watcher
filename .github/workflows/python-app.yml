@@ -33,3 +33,5 @@ jobs:
       run: python -m black .
     - name: Test
       run: python tests/main.py
+      env:
+        SLACK_WEBHOOK_URL: ${{env.SLACK_WEBHOOK_URL}}
