@@ -23,8 +23,8 @@ from watchcat.config.errors import (
 
 
 class Test(unittest.TestCase):
-    def test_main(self):
-        watchcat.__main__.main()
+    # def test_main(self):
+    #     watchcat.__main__.main()
 
     def test_http_resource(self):
         http_resource = HttpResource("Google", None, "https://www.google.com")
