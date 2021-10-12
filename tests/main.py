@@ -36,12 +36,12 @@ class Test(unittest.TestCase):
 
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
-        slack = SlackWebhookNotifier(webhook_url=webhook_url)
+        slack = SlackWebhookNotifier("slack1", webhook_url=webhook_url)
         slack.send(f"this is test message from {watchcat.info.name}")
 
     def test_command_notifier(self):
         command = "echo $message"
-        notifier = CommandNotifier(command=command)
+        notifier = CommandNotifier("command1", command=command)
         ret = notifier.send(
             f"[test_command_notifier] this is test message from {watchcat.info.name}"
         )
