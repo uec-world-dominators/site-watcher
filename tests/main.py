@@ -1,9 +1,12 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+TEST_DIR = os.path.dirname(__file__)
+sys.path.insert(0, os.path.dirname(TEST_DIR))
 import unittest
 import time
+import os.path
 
 import watchcat.__main__
 import watchcat.info
@@ -12,6 +15,11 @@ from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
+from watchcat.config.config import ConfigLoader
+from watchcat.config.errors import (
+    ConfigEmptyError,
+    ConfigVersionMissmatchError,
+)
 
 
 class Test(unittest.TestCase):
@@ -41,6 +49,28 @@ class Test(unittest.TestCase):
 
     def test_create_snapshot(self):
         Snapshot("test", time.time(), "this is content")
+
+
+class ConfigTest(unittest.TestCase):
+    def test_config_loader_all(self):
+        ConfigLoader(os.path.join(TEST_DIR, "configs/all.yaml"))
+
+    def test_config_loader_empty(self):
+        try:
+            ConfigLoader(os.path.join(TEST_DIR, "configs/empty.yaml"))
+            raise RuntimeError()
+        except ConfigEmptyError:
+            return
+
+    def test_config_loader_version_only(self):
+        ConfigLoader(os.path.join(TEST_DIR, "configs/version_only.yaml"))
+
+    def test_config_loader_version_missmatch(self):
+        try:
+            ConfigLoader(os.path.join(TEST_DIR, "configs/version_missmatch.yaml"))
+            raise RuntimeError()
+        except ConfigVersionMissmatchError:
+            return
 
 
 if __name__ == "__main__":
