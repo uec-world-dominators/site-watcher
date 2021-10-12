@@ -6,7 +6,11 @@ from watchcat.resource.resource import Resource
 
 class HttpResource(Resource):
     def __init__(
-        self, title: str, notifier: Notifier, url: str, enabled: bool = True,
+        self,
+        title: str,
+        notifier: Notifier,
+        url: str,
+        enabled: bool = True,
     ):
         """init
 
