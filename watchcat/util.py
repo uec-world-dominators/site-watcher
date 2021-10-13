@@ -1,3 +1,5 @@
+import os
+import re
 from typing import Dict
 
 
@@ -8,3 +10,20 @@ def recursive_update(base: Dict, update: Dict) -> Dict:
         else:
             base[k] = v
     return base
+
+
+def expand_environment_variables(d: str) -> str:
+    result = []
+    finditer = re.finditer(r"\$\{\{(?P<varname>[^${}]+)\}\}", d)
+    prev_start = 0
+    for match in finditer:
+        start, end = match.span()
+        result.append(d[prev_start:start])
+
+        var = os.environ.get(match.group("varname"))
+        result.append(var)
+
+        prev_start = end
+
+    result.append(d[prev_start : len(d)])
+    return "".join(result)

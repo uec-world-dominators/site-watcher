@@ -1,4 +1,6 @@
+import os
 import os.path
+import re
 from typing import Dict, List, Union
 
 import yaml
@@ -14,18 +16,21 @@ from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.resource.resource import Resource
-from watchcat.util import recursive_update
+from watchcat.util import expand_environment_variables, recursive_update
 
 
 class ConfigLoader:
-    def __init__(self, config_path: str) -> None:
+    def __init__(self, config_path: str, use_environment_variables=True) -> None:
         self.version = "1"
 
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"config file not found {config_path}")
 
         with open(config_path, "rt", encoding="utf-8") as f:
-            config = yaml.load(f, yaml.FullLoader)
+            content = f.read()
+            if use_environment_variables:
+                content = expand_environment_variables(content)
+            config = yaml.load(content, yaml.FullLoader)
             if not config:
                 raise ConfigEmptyError()
 
