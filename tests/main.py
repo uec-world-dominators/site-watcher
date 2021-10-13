@@ -31,9 +31,7 @@ class Test(unittest.TestCase):
         http_resource.get()
 
     def test_command_resource(self):
-        command_resource = CommandResource(
-            "echo", None, "echo $var", env={"var": "hoge"}
-        )
+        command_resource = CommandResource("echo", None, "echo $var", env={"var": "hoge"})
         assert command_resource.get() == "hoge\n"
 
     def test_slack_webhook(self):
@@ -44,9 +42,7 @@ class Test(unittest.TestCase):
     def test_command_notifier(self):
         command = "echo $message"
         notifier = CommandNotifier("command1", command=command)
-        ret = notifier.send(
-            f"[test_command_notifier] this is test message from {watchcat.info.name}"
-        )
+        ret = notifier.send(f"[test_command_notifier] this is test message from {watchcat.info.name}")
         assert ret == 0
 
     def test_create_snapshot(self):

@@ -81,13 +81,9 @@ class ConfigLoader:
             notifiers[notifier_key] = notifier
         return notifiers
 
-    def _load_notifier(
-        self, notifier_id: str, notifier_config: Dict[str, str]
-    ) -> Notifier:
+    def _load_notifier(self, notifier_id: str, notifier_config: Dict[str, str]) -> Notifier:
         if not isinstance(notifier_config, dict):
-            raise ConfigLoadError(
-                f"`notifiers.{notifier_id}` must be dict: {notifier_config}"
-            )
+            raise ConfigLoadError(f"`notifiers.{notifier_id}` must be dict: {notifier_config}")
 
         try:
             notifier_type = notifier_config["type"]
@@ -98,13 +94,9 @@ class ConfigLoader:
                 command = notifier_config["cmd"]
                 return CommandNotifier(notifier_id, command)
         except KeyError as e:
-            raise ConfigLoadError(
-                f"KeyError on loading notifier: {notifier_id}, key: {e}"
-            )
+            raise ConfigLoadError(f"KeyError on loading notifier: {notifier_id}, key: {e}")
 
-    def _load_resources(
-        self, resources_config: Dict[str, Dict[str, str]]
-    ) -> Dict[str, Resource]:
+    def _load_resources(self, resources_config: Dict[str, Dict[str, str]]) -> Dict[str, Resource]:
         if not isinstance(resources_config, dict):
             raise ConfigLoadError(f"`resources` must be dict")
 
@@ -114,13 +106,9 @@ class ConfigLoader:
 
         return resources
 
-    def _load_resource(
-        self, resource_key: str, resource_config: Dict[str, str]
-    ) -> Resource:
+    def _load_resource(self, resource_key: str, resource_config: Dict[str, str]) -> Resource:
         if not isinstance(resource_config, dict):
-            raise ConfigLoadError(
-                f"item of `resources` must be dict: {resource_config}"
-            )
+            raise ConfigLoadError(f"item of `resources` must be dict: {resource_config}")
         import copy
 
         # upgrade resource config with template
@@ -137,13 +125,9 @@ class ConfigLoader:
             env = resource_config.get("env")
             cmd = resource_config.get("cmd")
         except KeyError as e:
-            raise ConfigLoadError(
-                f"KeyError on loading resource: {resource_config}, key: {e}"
-            )
+            raise ConfigLoadError(f"KeyError on loading resource: {resource_config}, key: {e}")
         if not ((url != None) ^ ((cmd or env) != None)):
-            raise ConfigLoadError(
-                f"we couldn't determine resource type: {resource_config}"
-            )
+            raise ConfigLoadError(f"we couldn't determine resource type: {resource_config}")
 
         if url:
             return HttpResource(

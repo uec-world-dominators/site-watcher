@@ -6,10 +6,7 @@ root_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def _requirements():
-    return [
-        name.rstrip()
-        for name in open(os.path.join(root_dir, "requirements.txt")).readlines()
-    ]
+    return [name.rstrip() for name in open(os.path.join(root_dir, "requirements.txt")).readlines()]
 
 
 def _readme():
