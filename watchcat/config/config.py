@@ -19,7 +19,7 @@ from watchcat.util import expand_environment_variables, recursive_update
 
 
 class ConfigLoader:
-    def __init__(self, config_path: str, use_environment_variable=True) -> None:
+    def __init__(self, config_path: str, use_environment_variables=True) -> None:
         self.version = "1"
 
         if not os.path.exists(config_path):
@@ -27,7 +27,7 @@ class ConfigLoader:
 
         with open(config_path, "rt", encoding="utf-8") as f:
             content = f.read()
-            if use_environment_variable:
+            if use_environment_variables:
                 content = expand_environment_variables(content)
             config = yaml.load(content, yaml.FullLoader)
             if not config:
