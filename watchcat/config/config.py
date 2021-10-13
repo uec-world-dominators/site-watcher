@@ -102,12 +102,12 @@ class ConfigLoader:
             raise ConfigLoadError(f"`resources` must be dict")
 
         resources = dict()
-        for resource_key, resource_config in resources_config.items():
-            resources[resource_key] = self._load_resource(resource_key, resource_config)
+        for resource_id, resource_config in resources_config.items():
+            resources[resource_id] = self._load_resource(resource_id, resource_config)
 
         return resources
 
-    def _load_resource(self, resource_key: str, resource_config: Dict[str, str]) -> Resource:
+    def _load_resource(self, resource_id: str, resource_config: Dict[str, str]) -> Resource:
         if not isinstance(resource_config, dict):
             raise ConfigLoadError(f"item of `resources` must be dict: {resource_config}")
         import copy
@@ -131,21 +131,10 @@ class ConfigLoader:
             raise ConfigLoadError(f"we couldn't determine resource type: {resource_config}")
 
         if url:
-            return HttpResource(
-                # id=resource_key,
-                title=title,
-                notifier=notifier,
-                url=url,
-                enabled=enabled,
-            )
+            return HttpResource(resource_id=resource_id, notifier=notifier, url=url, enabled=enabled, title=title)
         elif cmd:
             return CommandResource(
-                # id=resource_key,
-                title=title,
-                notifier=notifier,
-                cmd=cmd,
-                env=env or dict(),
-                enabled=enabled,
+                resource_id=resource_id, notifier=notifier, cmd=cmd, env=env or dict(), enabled=enabled, title=title
             )
         else:
             raise NotImplementedError()
