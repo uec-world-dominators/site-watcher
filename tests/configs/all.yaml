@@ -1,24 +1,28 @@
 version: "1"
 resources:
-  - title: Google
+  google-top-page:
+    title: Google
     url: https://google.com/
     # cmd省略した場合はデフォルトでget method
 
-  - title: 1類
+  uec-1rui:
+    title: 1類
     cmd: curl -u z2910999:hogehogehoge $url
     enabled: true
     notifier: slack1
     env:
       url: https://www.c1.uec.ac.jp/internal/b3/
 
-  - title: 計算理論シラバス
+  keisanriron:
+    title: 計算理論シラバス
     cmd: uecli syllabus get -t 31 -c 21124231
     enabled: true
     env:
       http_proxy: socks5://localhost:1080
       https_proxy: socks5://localhost:1080
 
-  - title: ~~~~シラバス
+  syllabus:
+    title: ~~~~シラバス
     cmd: uecli --html syllabus get -t 31 -c 21124231
     template: uec_internal
     notifier: hoge
