@@ -127,7 +127,7 @@ class ConfigLoader:
             cmd = resource_config.get("cmd")
         except KeyError as e:
             raise ConfigLoadError(f"KeyError on loading resource: {resource_config}, key: {e}")
-        if not ((url != None) ^ ((cmd or env) != None)):
+        if not ((url is not None) ^ ((cmd or env) is not None)):
             raise ConfigLoadError(f"we couldn't determine resource type: {resource_config}")
 
         if url:
