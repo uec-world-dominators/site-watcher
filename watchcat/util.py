@@ -20,8 +20,11 @@ def expand_environment_variables(d: str) -> str:
         start, end = match.span()
         result.append(d[prev_start:start])
 
-        var = os.environ.get(match.group("varname"))
-        result.append(var)
+        varname = match.group("varname")
+        if var := os.environ.get(varname):
+            result.append(var)
+        else:
+            raise RuntimeError(f"failed to get env var `{varname}`")
 
         prev_start = end
 
