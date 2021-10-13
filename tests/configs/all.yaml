@@ -7,11 +7,11 @@ resources:
 
   uec-1rui:
     title: 1類
-    url: https://www.c1.uec.ac.jp/gakunai/b3/2301/
+    url: http://leggiero.sakura.ne.jp/xxxxbasic_auth_testxxxx/secret/kaiin_page_top.htm
     auth:
       basic:
-        username: ${{UEC_USERNAME}}
-        password: ${{UEC_PASSWORD}}
+        username: ${{BASICAUTH_TEST_USERNAME}}
+        password: ${{BASICAUTH_TEST_PASSWORD}}
     enabled: true
     notifier: slack1
 
