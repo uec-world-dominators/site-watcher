@@ -123,14 +123,13 @@ class ConfigLoader:
             template = self._get_template(template_id)
             resource_config = recursive_update(copy.deepcopy(template), resource_config)
 
-        try:
-            title = resource_config["title"]
-            url = resource_config.get("url")
-            enabled = resource_config.get("enabled", True)
-            notifier_id = resource_config.get("notifier")
-            notifier = self._get_notifier(notifier_id)
-            env = resource_config.get("env")
-            cmd = resource_config.get("cmd")
+        title = resource_config.get("title")
+        url = resource_config.get("url")
+        enabled = resource_config.get("enabled", True)
+        notifier_id = resource_config.get("notifier")
+        notifier = self._get_notifier(notifier_id)
+        env = resource_config.get("env")
+        cmd = resource_config.get("cmd")
         if auth_config := resource_config.get("auth"):
             auth = self._load_auth(auth_config)
         else:
