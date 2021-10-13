@@ -20,6 +20,7 @@ from watchcat.config.errors import (
     ConfigEmptyError,
     ConfigVersionMissmatchError,
 )
+from watchcat import util
 
 
 class Test(unittest.TestCase):
@@ -47,6 +48,39 @@ class Test(unittest.TestCase):
 
     def test_create_snapshot(self):
         Snapshot("test", time.time(), "this is content")
+
+
+class UtilTest(unittest.TestCase):
+    def test_expand_environment_variable(self):
+        os.environ["HOGE"] = "123"
+        s = r"ab${{HOGE}}cd"
+        s = util.expand_environment_variables(s)
+        self.assertEqual(s, "ab123cd")
+
+    def test_expand_environment_variable_empty_before(self):
+        os.environ["HOGE"] = "123"
+        s = r"${{HOGE}}cd"
+        s = util.expand_environment_variables(s)
+        self.assertEqual(s, "123cd")
+
+    def test_expand_environment_variable_empty_after(self):
+        os.environ["HOGE"] = "123"
+        s = r"ab${{HOGE}}"
+        s = util.expand_environment_variables(s)
+        self.assertEqual(s, "ab123")
+
+    def test_expand_environment_variable_empty_both(self):
+        os.environ["HOGE"] = "123"
+        s = r"${{HOGE}}"
+        s = util.expand_environment_variables(s)
+        self.assertEqual(s, "123")
+
+    def test_expand_environment_variable_multiple(self):
+        os.environ["HOGE"] = "123"
+        os.environ["HAGE"] = "456"
+        s = r"${{HOGE}}${{HAGE}}"
+        s = util.expand_environment_variables(s)
+        self.assertEqual(s, "123456")
 
 
 class ConfigTest(unittest.TestCase):
