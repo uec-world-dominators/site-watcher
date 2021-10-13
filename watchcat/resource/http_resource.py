@@ -2,6 +2,7 @@ import time
 from typing import Union
 
 import requests
+from requests.auth import AuthBase
 from watchcat.notifier.notifier import Notifier
 from watchcat.resource.errors import GetError
 from watchcat.resource.resource import Resource
@@ -10,7 +11,13 @@ from watchcat.snapshot import Snapshot
 
 class HttpResource(Resource):
     def __init__(
-        self, resource_id: str, notifier: Notifier, url: str, enabled: bool = True, title: Union[str, None] = None
+        self,
+        resource_id: str,
+        notifier: Notifier,
+        url: str,
+        enabled: bool = True,
+        title: Union[str, None] = None,
+        auth: AuthBase = None,
     ):
         """init
 
@@ -26,9 +33,12 @@ class HttpResource(Resource):
             有効かどうか, by default True
         title : Union[str, None], optional
             通知に表示されるタイトル, by default None
+        auth : requests.auth.AuthBase
+            認証情報
         """
         super().__init__(resource_id, notifier, enabled, title or url)
         self.url = url
+        self.auth = auth
 
     def get(self):
         """url先のhtmlテキストを取得
@@ -43,7 +53,7 @@ class HttpResource(Resource):
         GetError
             取得エラー
         """
-        response = requests.get(self.url)
+        response = requests.get(self.url, auth=self.auth)
         if response.status_code == 200:
             text = response.text
             timestamp = time.time()

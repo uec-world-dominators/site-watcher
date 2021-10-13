@@ -4,6 +4,7 @@ import re
 from typing import Dict, List, Union
 
 import yaml
+from requests.auth import AuthBase, HTTPBasicAuth
 from watchcat.config.errors import (
     ConfigEmptyError,
     ConfigLoadError,
@@ -130,13 +131,18 @@ class ConfigLoader:
             notifier = self._get_notifier(notifier_id)
             env = resource_config.get("env")
             cmd = resource_config.get("cmd")
-        except KeyError as e:
-            raise ConfigLoadError(f"KeyError on loading resource: {resource_config}, key: {e}")
+        if auth_config := resource_config.get("auth"):
+            auth = self._load_auth(auth_config)
+        else:
+            auth = None
+
         if not ((url is not None) ^ ((cmd or env) is not None)):
             raise ConfigLoadError(f"we couldn't determine resource type: {resource_config}")
 
         if url:
-            return HttpResource(resource_id=resource_id, notifier=notifier, url=url, enabled=enabled, title=title)
+            return HttpResource(
+                resource_id=resource_id, notifier=notifier, url=url, enabled=enabled, title=title, auth=auth
+            )
         elif cmd:
             return CommandResource(
                 resource_id=resource_id, notifier=notifier, cmd=cmd, env=env or dict(), enabled=enabled, title=title
@@ -160,3 +166,17 @@ class ConfigLoader:
         for template_key, template_config in templates_config.items():
             templates[template_key] = template_config
         return templates
+
+    def _load_auth(self, auth_config: Dict[str, Dict]) -> AuthBase:
+        if not isinstance(auth_config, dict):
+            raise ConfigLoadError(f"`auth` must be dict: {auth_config}")
+
+        if basic := auth_config.get("basic"):
+            try:
+                username = basic["username"]
+                password = basic["password"]
+                return HTTPBasicAuth(username, password)
+            except Exception as e:
+                raise ConfigLoadError(f"format error on basic auth config: {basic}")
+        else:
+            raise ConfigLoadError(f"Unsupported authentication method")

@@ -7,11 +7,13 @@ resources:
 
   uec-1rui:
     title: 1類
-    cmd: curl -u z2910999:hogehogehoge $url
+    url: https://www.c1.uec.ac.jp/gakunai/b3/2301/
+    auth:
+      basic:
+        username: ${{UEC_USERNAME}}
+        password: ${{UEC_PASSWORD}}
     enabled: true
     notifier: slack1
-    env:
-      url: https://www.c1.uec.ac.jp/internal/b3/
 
   keisanriron:
     title: 計算理論シラバス
