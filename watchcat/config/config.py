@@ -55,7 +55,7 @@ class ConfigLoader:
         if resources_config := config.get("resources"):
             self.resources = self._load_resources(resources_config)
         else:
-            self.resources = list()
+            self.resources = dict()
 
     def _get_notifier(self, notifier_id: Union[str, None]) -> Notifier:
         try:
@@ -102,17 +102,21 @@ class ConfigLoader:
                 f"KeyError on loading notifier: {notifier_id}, key: {e}"
             )
 
-    def _load_resources(self, resources_config: List[Dict[str, str]]) -> List[Resource]:
-        if not isinstance(resources_config, list):
-            raise ConfigLoadError(f"`resources` must be list")
+    def _load_resources(
+        self, resources_config: Dict[str, Dict[str, str]]
+    ) -> Dict[str, Resource]:
+        if not isinstance(resources_config, dict):
+            raise ConfigLoadError(f"`resources` must be dict")
 
-        resources = list()
-        for resource_config in resources_config:
-            resource = self._load_resource(resource_config)
-            resources.append(resource)
+        resources = dict()
+        for resource_key, resource_config in resources_config.items():
+            resources[resource_key] = self._load_resource(resource_key, resource_config)
+
         return resources
 
-    def _load_resource(self, resource_config: Dict[str, str]) -> Resource:
+    def _load_resource(
+        self, resource_key: str, resource_config: Dict[str, str]
+    ) -> Resource:
         if not isinstance(resource_config, dict):
             raise ConfigLoadError(
                 f"item of `resources` must be dict: {resource_config}"
@@ -143,6 +147,7 @@ class ConfigLoader:
 
         if url:
             return HttpResource(
+                # id=resource_key,
                 title=title,
                 notifier=notifier,
                 url=url,
@@ -150,6 +155,7 @@ class ConfigLoader:
             )
         elif cmd:
             return CommandResource(
+                # id=resource_key,
                 title=title,
                 notifier=notifier,
                 cmd=cmd,
