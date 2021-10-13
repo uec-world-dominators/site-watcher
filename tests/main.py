@@ -1,25 +1,21 @@
 import os
 import sys
 
-
 TEST_DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.dirname(TEST_DIR))
-import unittest
-import time
 import os.path
+import time
+import unittest
 
 import watchcat.__main__
 import watchcat.info
+from watchcat.config.config import ConfigLoader
+from watchcat.config.errors import ConfigEmptyError, ConfigVersionMissmatchError
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
-from watchcat.config.config import ConfigLoader
-from watchcat.config.errors import (
-    ConfigEmptyError,
-    ConfigVersionMissmatchError,
-)
 
 
 class Test(unittest.TestCase):
@@ -27,13 +23,12 @@ class Test(unittest.TestCase):
     #     watchcat.__main__.main()
 
     def test_http_resource(self):
-        http_resource = HttpResource("Google", None, "https://www.google.com")
-        http_resource.get()
+        http_resource = HttpResource("google", None, "https://www.google.com", title="Google")
+        snapshot = http_resource.get()
+        assert snapshot.resource_id == "google"
 
     def test_command_resource(self):
-        command_resource = CommandResource(
-            "echo", None, "echo $var", env={"var": "hoge"}
-        )
+        command_resource = CommandResource("echo", None, "echo $var", env={"var": "hoge"})
         assert command_resource.get() == "hoge\n"
 
     def test_slack_webhook(self):
@@ -44,9 +39,7 @@ class Test(unittest.TestCase):
     def test_command_notifier(self):
         command = "echo $message"
         notifier = CommandNotifier("command1", command=command)
-        ret = notifier.send(
-            f"[test_command_notifier] this is test message from {watchcat.info.name}"
-        )
+        ret = notifier.send(f"[test_command_notifier] this is test message from {watchcat.info.name}")
         assert ret == 0
 
     def test_create_snapshot(self):

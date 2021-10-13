@@ -6,10 +6,7 @@ root_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def _requirements():
-    return [
-        name.rstrip()
-        for name in open(os.path.join(root_dir, "requirements.txt")).readlines()
-    ]
+    return [name.rstrip() for name in open(os.path.join(root_dir, "requirements.txt")).readlines()]
 
 
 def _readme():
@@ -29,9 +26,7 @@ setuptools.setup(
     long_description=_readme(),
     long_description_content_type="text/markdown",
     keywords="",
-    classifiers=[
-        "Programming Language :: Python :: 3",
-    ],
+    classifiers=["Programming Language :: Python :: 3",],
     python_requires=">=3.6",
     entry_points={"console_scripts": ["watchcat=watchcat.__main__:main"]},
 )

@@ -11,6 +11,4 @@ class SimpleDiffDetector(DiffDetector):
     def diff(self, a: Snapshot, b: Snapshot):
         differ = Differ()
         diffs = differ.compare(a.content.split("\n"), b.content.split("\n"))
-        return "\n".join(
-            filter(lambda e: e.startswith("-") or e.startswith("+"), diffs)
-        )
+        return "\n".join(filter(lambda e: e.startswith("-") or e.startswith("+"), diffs))
