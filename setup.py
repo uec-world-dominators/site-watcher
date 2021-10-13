@@ -26,7 +26,7 @@ setuptools.setup(
     long_description=_readme(),
     long_description_content_type="text/markdown",
     keywords="",
-    classifiers=["Programming Language :: Python :: 3",],
+    classifiers=["Programming Language :: Python :: 3"],
     python_requires=">=3.6",
     entry_points={"console_scripts": ["watchcat=watchcat.__main__:main"]},
 )
