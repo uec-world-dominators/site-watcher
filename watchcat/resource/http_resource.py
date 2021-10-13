@@ -1,3 +1,4 @@
+import sys
 import time
 from typing import Union
 
@@ -60,4 +61,6 @@ class HttpResource(Resource):
             snapshot = Snapshot(self.resource_id, timestamp, text)
             return snapshot
         else:
+            print(response.status_code, file=sys.stderr)
+            print(response.text, file=sys.stderr)
             raise GetError()
