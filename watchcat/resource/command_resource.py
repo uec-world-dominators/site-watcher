@@ -49,9 +49,7 @@ class CommandResource(Resource):
         GetError
             取得エラー
         """
-        response = subprocess.run(
-            self.cmd, shell=True, env=self.env, stdout=subprocess.PIPE
-        )
+        response = subprocess.run(self.cmd, shell=True, env=self.env, stdout=subprocess.PIPE)
         if response.returncode == 0:
             text = response.stdout.decode(encoding="utf-8")
             return text

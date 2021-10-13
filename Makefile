@@ -1,5 +1,5 @@
 format:
-	python3 -m black .
+	python3 -m black --line-length=120 .
 
 test: format
 	python3 tests/main.py
