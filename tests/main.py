@@ -25,11 +25,24 @@ class Test(unittest.TestCase):
     def test_http_resource(self):
         http_resource = HttpResource("google", None, "https://www.google.com", title="Google")
         snapshot = http_resource.get()
+        assert http_resource.title == "Google"
         assert snapshot.resource_id == "google"
 
+        http_resource2 = HttpResource("google", None, "https://www.google.com")
+        snapshot2 = http_resource2.get()
+        assert http_resource2.title == "https://www.google.com"
+        assert snapshot2.resource_id == "google"
+
     def test_command_resource(self):
-        command_resource = CommandResource("echo", None, "echo $var", env={"var": "hoge"})
-        assert command_resource.get() == "hoge\n"
+        command_resource = CommandResource("echo", None, "echo $var", env={"var": "hoge"}, title="echo")
+        snapshot = command_resource.get()
+        assert command_resource.title == "echo"
+        assert snapshot.resource_id == "echo"
+
+        command_resource2 = CommandResource("echo", None, "echo $var", env={"var": "hoge"})
+        snapshot2 = command_resource2.get()
+        assert command_resource2.title == "echo $var"
+        assert snapshot2.resource_id == "echo"
 
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
