@@ -9,6 +9,7 @@ import unittest
 
 import watchcat.__main__
 import watchcat.info
+from watchcat import util
 from watchcat.config.config import ConfigLoader
 from watchcat.config.errors import ConfigEmptyError, ConfigVersionMissmatchError
 from watchcat.notifier.command import CommandNotifier
@@ -16,12 +17,7 @@ from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
-from watchcat.config.config import ConfigLoader
-from watchcat.config.errors import (
-    ConfigEmptyError,
-    ConfigVersionMissmatchError,
-)
-from watchcat import util
+from watchcat.storage.sql_storage import SqlStorage
 
 
 class Test(unittest.TestCase):
@@ -63,6 +59,14 @@ class Test(unittest.TestCase):
 
     def test_create_snapshot(self):
         Snapshot("test", time.time(), "this is content")
+
+    def test_sql_storage(self):
+        sql = SqlStorage("test.db")
+        content1 = "this 'is' content"
+        snapshot = Snapshot("test", time.time(), content1)
+        sql.set(snapshot)
+        content2 = sql.get("test")
+        assert content1 == content2
 
 
 class UtilTest(unittest.TestCase):
