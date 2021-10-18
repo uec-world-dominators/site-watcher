@@ -19,16 +19,16 @@ class SqlStorage(Storage):
         """
         self.cur.execute(query)
 
-    def get(self, resource_id: str):
-        query = f"""
-        SELECT content FROM Snapshot WHERE resource_id = '{resource_id}' ORDER BY id DESC
-        """
-        self.cur.execute(query)
-        content = self.cur.fetchone()
-        return content
-
     def set(self, snapshot: Snapshot):
         query = """
         INSERT INTO Snapshot (resource_id, timestamp, content) VALUES (?, ?, ?)
         """
         self.cur.execute(query, (snapshot.resource_id, snapshot.timestamp, snapshot.content))
+
+    def get(self, resource_id: str):
+        query = f"""
+        SELECT content FROM Snapshot WHERE resource_id = '{resource_id}' ORDER BY id DESC
+        """
+        self.cur.execute(query)
+        content = self.cur.fetchone()[0]
+        return content
