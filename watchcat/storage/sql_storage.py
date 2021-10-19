@@ -1,4 +1,5 @@
 import sqlite3
+from typing import Union
 
 from watchcat.snapshot import Snapshot
 from watchcat.storage.storage import Storage
@@ -28,11 +29,13 @@ class SqlStorage(Storage):
         """
         self.cur.execute(query, (snapshot.resource_id, snapshot.timestamp, snapshot.content))
 
-    def get(self, resource_id: str) -> Snapshot:
+    def get(self, resource_id: str) -> Union[Snapshot, None]:
         query = f"""
         SELECT * FROM Snapshot WHERE resource_id = '{resource_id}' ORDER BY id DESC
         """
         self.cur.execute(query)
-        _, resource_id, timestamp, content = self.cur.fetchone()
-        snapshot = Snapshot(resource_id, timestamp, content)
-        return snapshot
+        if result := self.cur.fetchone():
+            _, resource_id, timestamp, content = result
+            return Snapshot(resource_id, timestamp, content)
+        else:
+            return None
