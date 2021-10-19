@@ -30,6 +30,6 @@ class SqlStorage(Storage):
         SELECT * FROM Snapshot WHERE resource_id = '{resource_id}' ORDER BY id DESC
         """
         self.cur.execute(query)
-        resource_id, timestamp, content = self.cur.fetchone()
+        _, resource_id, timestamp, content = self.cur.fetchone()
         snapshot = Snapshot(resource_id, timestamp, content)
         return snapshot
