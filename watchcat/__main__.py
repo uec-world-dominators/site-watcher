@@ -1,8 +1,8 @@
 import sys
+
 from watchcat import cli
 from watchcat.config.config import ConfigLoader
 from watchcat.diff_detector.simple import SimpleDiffDetector
-from watchcat.storage.storage import Storage
 from watchcat.storage.sql_storage import SqlStorage
 
 
