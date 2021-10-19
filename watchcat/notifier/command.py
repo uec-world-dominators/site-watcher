@@ -12,5 +12,5 @@ class CommandNotifier(Notifier):
         process = subprocess.run(self.command, shell=True, check=True, env={"message": message})
         return process.returncode
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return f"<CommandNotifier(command={self.command})>"
