@@ -39,7 +39,7 @@ class CommandResource(Resource):
         self.cmd = cmd
         self.env = env
 
-    def get(self):
+    def get(self) -> Snapshot:
         """コマンドを実行して返り値を取得
 
         Returns

@@ -41,7 +41,7 @@ class HttpResource(Resource):
         self.url = url
         self.auth = auth
 
-    def get(self):
+    def get(self) -> Snapshot:
         """url先のhtmlテキストを取得
 
         Returns

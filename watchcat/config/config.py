@@ -1,7 +1,6 @@
 import os
 import os.path
-import re
-from typing import Dict, List, Union
+from typing import Dict, Union
 
 import yaml
 from requests.auth import AuthBase, HTTPBasicAuth
@@ -80,7 +79,7 @@ class ConfigLoader:
 
     def _load_notifiers(self, notifiers_config: Dict[str, Dict]) -> Dict[str, Notifier]:
         if not isinstance(notifiers_config, dict):
-            raise ConfigLoadError(f"`notifiers` must be dict")
+            raise ConfigLoadError("`notifiers` must be dict")
 
         notifiers = dict()
         for notifier_key, notifier_config in notifiers_config.items():
@@ -105,7 +104,7 @@ class ConfigLoader:
 
     def _load_resources(self, resources_config: Dict[str, Dict[str, str]]) -> Dict[str, Resource]:
         if not isinstance(resources_config, dict):
-            raise ConfigLoadError(f"`resources` must be dict")
+            raise ConfigLoadError("`resources` must be dict")
 
         resources = dict()
         for resource_id, resource_config in resources_config.items():
@@ -175,7 +174,7 @@ class ConfigLoader:
                 username = basic["username"]
                 password = basic["password"]
                 return HTTPBasicAuth(username, password)
-            except Exception as e:
+            except Exception:
                 raise ConfigLoadError(f"format error on basic auth config: {basic}")
         else:
             raise ConfigLoadError(f"Unsupported authentication method")

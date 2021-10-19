@@ -23,5 +23,5 @@ class Resource:
         self.enabled = enabled
         self.title = title
 
-    def get():
+    def get(self):
         raise NotImplementedError()
