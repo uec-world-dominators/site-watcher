@@ -25,10 +25,11 @@ class SqlStorage(Storage):
         """
         self.cur.execute(query, (snapshot.resource_id, snapshot.timestamp, snapshot.content))
 
-    def get(self, resource_id: str):
+    def get(self, resource_id: str) -> Snapshot:
         query = f"""
-        SELECT content FROM Snapshot WHERE resource_id = '{resource_id}' ORDER BY id DESC
+        SELECT * FROM Snapshot WHERE resource_id = '{resource_id}' ORDER BY id DESC
         """
         self.cur.execute(query)
-        content = self.cur.fetchone()[0]
-        return content
+        resource_id, timestamp, content = self.cur.fetchone()
+        snapshot = Snapshot(resource_id, timestamp, content)
+        return snapshot
