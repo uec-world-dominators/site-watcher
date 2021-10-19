@@ -9,6 +9,7 @@ class SqlStorage(Storage):
     def __init__(self, db_path: str):
         super().__init__(db_path)
         conn = sqlite3.connect(db_path)
+        self.conn = conn
         self.cur = conn.cursor()
         query = """
         CREATE TABLE IF NOT EXISTS Snapshot (
@@ -34,6 +35,7 @@ class SqlStorage(Storage):
         INSERT INTO Snapshot (resource_id, timestamp, content) VALUES (?, ?, ?)
         """
         self.cur.execute(query, (snapshot.resource_id, snapshot.timestamp, snapshot.content))
+        self.conn.commit()
 
     def get(self, resource_id: str) -> Union[Snapshot, None]:
         query = f"""
