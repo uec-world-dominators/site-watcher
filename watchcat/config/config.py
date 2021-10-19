@@ -103,6 +103,8 @@ class ConfigLoader:
             elif notifier_type == "file":
                 path = notifier_config["path"]
                 return FileNotifier(notifier_id, path)
+            else:
+                raise ConfigLoadError(f"No such notifier: {notifier_id}")
         except KeyError as e:
             raise ConfigLoadError(f"KeyError on loading notifier: {notifier_id}, key: {e}")
 
