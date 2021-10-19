@@ -19,6 +19,9 @@ class SqlStorage(Storage):
         """
         self.cur.execute(query)
 
+    def __str__(self) -> str:
+        return f"<SqlStorage(db_path={self.db_path})>"
+
     def set(self, snapshot: Snapshot):
         query = """
         INSERT INTO Snapshot (resource_id, timestamp, content) VALUES (?, ?, ?)

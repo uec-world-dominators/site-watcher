@@ -39,6 +39,10 @@ class CommandResource(Resource):
         self.cmd = cmd
         self.env = env
 
+    def __str__(self) -> str:
+        if self.title:
+            return f"<CommandResource(resource_id={self.resource_id}, notifier={self.notifier}, title{self.title}, enabled={self.enabled}, title={self.title})>"
+
     def get(self) -> Snapshot:
         """コマンドを実行して返り値を取得
 

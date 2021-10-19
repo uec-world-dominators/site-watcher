@@ -11,6 +11,9 @@ class Storage:
             dbの保存場所
         """
 
+    def __str__(self):
+        raise NotImplementedError()
+
     def get(self, resource_id: str):
         raise NotImplementedError()
 

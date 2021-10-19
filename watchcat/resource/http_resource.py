@@ -41,6 +41,10 @@ class HttpResource(Resource):
         self.url = url
         self.auth = auth
 
+    def __str__(self) -> str:
+        if self.title:
+            return f"<HttpResource(resource_id={self.resource_id}, notifier={self.notifier}, title={self.title}, enabled={self.enabled})>"
+
     def get(self) -> Snapshot:
         """url先のhtmlテキストを取得
 
