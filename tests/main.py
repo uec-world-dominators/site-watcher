@@ -25,26 +25,38 @@ class Test(unittest.TestCase):
     #     watchcat.__main__.main()
 
     def test_http_resource(self):
-        http_resource = HttpResource("google", None, "https://www.google.com", title="Google")
-        snapshot = http_resource.get()
-        assert http_resource.title == "Google"
-        assert snapshot.resource_id == "google"
+        resource_id = "google"
+        webhook_url = os.environ["SLACK_WEBHOOK_URL"]
+        notifier = SlackWebhookNotifier("slack1", webhook_url=webhook_url)
+        url = "https://www.google.com"
+        title = "Google"
 
-        http_resource2 = HttpResource("google", None, "https://www.google.com")
+        http_resource = HttpResource(resource_id, notifier, url, title=title)
+        snapshot = http_resource.get()
+        assert snapshot.resource_id == resource_id
+        assert http_resource.title == title
+
+        http_resource2 = HttpResource(resource_id, notifier, url)
         snapshot2 = http_resource2.get()
-        assert http_resource2.title == "https://www.google.com"
-        assert snapshot2.resource_id == "google"
+        assert snapshot2.resource_id == resource_id
+        assert http_resource2.title == url
 
     def test_command_resource(self):
-        command_resource = CommandResource("echo", None, "echo $var", env={"var": "hoge"}, title="echo")
-        snapshot = command_resource.get()
-        assert command_resource.title == "echo"
-        assert snapshot.resource_id == "echo"
+        resource_id = "echo"
+        webhook_url = os.environ["SLACK_WEBHOOK_URL"]
+        notifier = SlackWebhookNotifier("slack1", webhook_url=webhook_url)
+        cmd = "echo $var"
+        title = "echo"
 
-        command_resource2 = CommandResource("echo", None, "echo $var", env={"var": "hoge"})
+        command_resource = CommandResource(resource_id, notifier, cmd, env={"var": "hoge"}, title=title)
+        snapshot = command_resource.get()
+        assert snapshot.resource_id == resource_id
+        assert command_resource.title == title
+
+        command_resource2 = CommandResource(resource_id, notifier, cmd, env={"var": "hoge"})
         snapshot2 = command_resource2.get()
-        assert command_resource2.title == "echo $var"
-        assert snapshot2.resource_id == "echo"
+        assert snapshot2.resource_id == resource_id
+        assert command_resource2.title == cmd
 
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
@@ -65,7 +77,7 @@ class Test(unittest.TestCase):
         content1 = "this 'is' content"
         snapshot = Snapshot("test", time.time(), content1)
         sql.set(snapshot)
-        content2 = sql.get("test")
+        content2 = sql.get("test").content
         assert content1 == content2
 
 
