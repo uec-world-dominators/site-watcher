@@ -14,6 +14,7 @@ from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.notifier import Notifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
+from watchcat.notifier.file import FileNotifier
 from watchcat.resource.http_resource import HttpResource
 from watchcat.resource.resource import Resource
 from watchcat.util import expand_environment_variables, recursive_update
@@ -99,6 +100,9 @@ class ConfigLoader:
             elif notifier_type == "cmd":
                 command = notifier_config["cmd"]
                 return CommandNotifier(notifier_id, command)
+            elif notifier_type == "file":
+                path = notifier_config["path"]
+                return FileNotifier(notifier_id, path)
         except KeyError as e:
             raise ConfigLoadError(f"KeyError on loading notifier: {notifier_id}, key: {e}")
 
