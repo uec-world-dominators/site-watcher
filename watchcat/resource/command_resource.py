@@ -1,6 +1,7 @@
 import subprocess
 import time
-from typing import Dict, Union
+from typing import Dict, List, Union
+from watchcat.filter.filter import Filter
 
 from watchcat.notifier.notifier import Notifier
 from watchcat.resource.errors import GetError
@@ -17,6 +18,7 @@ class CommandResource(Resource):
         enabled: bool = True,
         title: Union[str, None] = None,
         env: Dict[str, str] = dict(),
+        filters: List[Filter] = [],
     ):
         """init
 
@@ -35,7 +37,7 @@ class CommandResource(Resource):
         env : Dict[str, str], optional
             環境変数, by default dict()
         """
-        super().__init__(resource_id, notifier, enabled, title or cmd)
+        super().__init__(resource_id, notifier, enabled, title or cmd, filters)
         self.cmd = cmd
         self.env = env
 

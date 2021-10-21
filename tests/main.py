@@ -18,6 +18,8 @@ from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
 from watchcat.storage.sql_storage import SqlStorage
+from watchcat.filter.command import CommandFilter
+from watchcat.filter.css_selector import CssSelectorFilter
 
 
 class Test(unittest.TestCase):
@@ -134,6 +136,20 @@ class ConfigTest(unittest.TestCase):
             raise RuntimeError()
         except ConfigVersionMissmatchError:
             return
+
+
+class FilterTest(unittest.TestCase):
+    def test_command_filter(self):
+        filter = CommandFilter("grep hoge")
+        _in = "hoge\nhage\nhige\n"
+        out = filter.filter(_in)
+        self.assertEqual(out, "hoge\n")
+
+    def test_cssselector_filter(self):
+        filter = CssSelectorFilter("#hoge")
+        _in = '<html><body><div id="hoge"></div></body></html>'
+        out = filter.filter(_in)
+        self.assertEqual(out, '<div id="hoge"></div>')
 
 
 if __name__ == "__main__":

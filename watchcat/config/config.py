@@ -1,6 +1,6 @@
 import os
 import os.path
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 import yaml
 from requests.auth import AuthBase, HTTPBasicAuth
@@ -10,7 +10,11 @@ from watchcat.config.errors import (
     ConfigVersionMissmatchError,
     ConfigVersionNotFoundError,
 )
+from watchcat.filter.command import CommandFilter
+from watchcat.filter.css_selector import CssSelectorFilter
+from watchcat.filter.filter import Filter
 from watchcat.notifier.command import CommandNotifier
+from watchcat.notifier.file import FileNotifier
 from watchcat.notifier.notifier import Notifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
@@ -45,11 +49,11 @@ class ConfigLoader:
             raise ConfigVersionNotFoundError()
 
         # load notifiers
+        self.default_notifier = config.get("default_notifier")
         if notifiers_config := config.get("notifiers"):
             self.notifiers = self._load_notifiers(notifiers_config)
         else:
             self.notifiers = dict()
-        self.default_notifier = config.get("default_notifier")
 
         # load templates
         if templates_config := config.get("templates"):
@@ -99,6 +103,11 @@ class ConfigLoader:
             elif notifier_type == "cmd":
                 command = notifier_config["cmd"]
                 return CommandNotifier(notifier_id, command)
+            elif notifier_type == "file":
+                path = notifier_config["path"]
+                return FileNotifier(notifier_id, path)
+            else:
+                raise ConfigLoadError(f"Unsupported notifier type: {notifier_type}")
         except KeyError as e:
             raise ConfigLoadError(f"KeyError on loading notifier: {notifier_id}, key: {e}")
 
@@ -134,16 +143,33 @@ class ConfigLoader:
         else:
             auth = None
 
+        if filters_config := resource_config.get("filters"):
+            filters = self._load_filters(filters_config)
+        else:
+            filters = []
+
         if not ((url is not None) ^ ((cmd or env) is not None)):
             raise ConfigLoadError(f"we couldn't determine resource type: {resource_config}")
 
         if url:
             return HttpResource(
-                resource_id=resource_id, notifier=notifier, url=url, enabled=enabled, title=title, auth=auth
+                resource_id=resource_id,
+                notifier=notifier,
+                url=url,
+                enabled=enabled,
+                title=title,
+                auth=auth,
+                filters=filters,
             )
         elif cmd:
             return CommandResource(
-                resource_id=resource_id, notifier=notifier, cmd=cmd, env=env or dict(), enabled=enabled, title=title
+                resource_id=resource_id,
+                notifier=notifier,
+                cmd=cmd,
+                env=env or dict(),
+                enabled=enabled,
+                title=title,
+                filters=filters,
             )
         else:
             raise NotImplementedError()
@@ -178,3 +204,29 @@ class ConfigLoader:
                 raise ConfigLoadError(f"format error on basic auth config: {basic}")
         else:
             raise ConfigLoadError(f"Unsupported authentication method")
+
+    def _load_filters(self, filters_config: List) -> List[Filter]:
+        if not isinstance(filters_config, list):
+            raise ConfigLoadError(f"`filters` must be list: {filters_config}")
+
+        filters = []
+        for filter_config in filters_config:
+            filters.append(self._load_filter(filter_config))
+        return filters
+
+    def _load_filter(self, filter_config: Dict[str, Dict]) -> Filter:
+        if not isinstance(filter_config, dict):
+            raise ConfigLoadError(f"`filter` must be dict: {filter_config}")
+
+        if _type := filter_config.get("type"):
+            try:
+                if _type == "selector":
+                    return CssSelectorFilter(filter_config["selector"])
+                elif _type == "cmd":
+                    return CommandFilter(filter_config["cmd"])
+                else:
+                    raise ConfigLoadError(f"Unsupported filter type")
+            except KeyError as e:
+                raise ConfigLoadError(f"KeyError occurred on parsing: {filter_config}, {e}")
+        else:
+            raise ConfigLoadError(f"`filter` must specify type: {filter_config}")

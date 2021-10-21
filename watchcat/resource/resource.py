@@ -1,10 +1,18 @@
-from typing import Union
+from typing import List, Union
+from watchcat.filter.filter import Filter
 
 from watchcat.notifier.notifier import Notifier
 
 
 class Resource:
-    def __init__(self, resource_id: str, notifier: Notifier, enabled: bool = True, title: Union[str, None] = None):
+    def __init__(
+        self,
+        resource_id: str,
+        notifier: Notifier,
+        enabled: bool = True,
+        title: Union[str, None] = None,
+        filters: List[Filter] = [],
+    ):
         """init
 
         Parameters
@@ -22,6 +30,13 @@ class Resource:
         self.notifier = notifier
         self.enabled = enabled
         self.title = title
+        self.filters = filters
 
     def get(self):
         raise NotImplementedError()
+
+    def get_filtered(self):
+        snapshot = self.get()
+        for filter in self.filters:
+            snapshot.content = filter.filter(snapshot.content)
+        return snapshot
