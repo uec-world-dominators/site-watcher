@@ -1,9 +1,10 @@
 import sys
 import time
-from typing import Union
+from typing import List, Union
 
 import requests
 from requests.auth import AuthBase
+from watchcat.filter.filter import Filter
 from watchcat.notifier.notifier import Notifier
 from watchcat.resource.errors import GetError
 from watchcat.resource.resource import Resource
@@ -19,6 +20,7 @@ class HttpResource(Resource):
         enabled: bool = True,
         title: Union[str, None] = None,
         auth: AuthBase = None,
+        filters: List[Filter] = [],
     ):
         """init
 
@@ -37,7 +39,7 @@ class HttpResource(Resource):
         auth : requests.auth.AuthBase
             認証情報
         """
-        super().__init__(resource_id, notifier, enabled, title or url)
+        super().__init__(resource_id, notifier, enabled, title or url, filters)
         self.url = url
         self.auth = auth
 
