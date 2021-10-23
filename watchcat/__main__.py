@@ -1,5 +1,7 @@
 import sys
+
 import termcolor
+
 from watchcat import cli
 from watchcat.config.config import ConfigLoader
 from watchcat.diff_detector.simple import SimpleDiffDetector
@@ -12,6 +14,11 @@ def main():
 
     config = ConfigLoader(args.config)
     diff_detector = SimpleDiffDetector()
+
+    update = []
+    no_update = []
+    first_fetch = []
+
     with SqlStorage(args.db) as storage:
         for resource_id, resource in config.resources.items():
             new_snapshot = resource.get()
@@ -21,8 +28,21 @@ def main():
                 if diff_detector.has_update(old_snapshot, new_snapshot):
                     message = f"{resource.title} has updated!\n{diff_detector.diff(old_snapshot, new_snapshot)}"
                     resource.notifier.send(message)
-                    termcolor.cprint(f"update found for {resource_id}", file=sys.stderr, color="green")
+                    update.append(resource_id)
                 else:
-                    termcolor.cprint(f"no update found for {resource_id}", file=sys.stderr)
+                    no_update.append(resource_id)
             else:
-                termcolor.cprint(f"first fetch for {resource_id}", file=sys.stderr, color="yellow")
+                first_fetch.append(resource_id)
+
+    if update:
+        termcolor.cprint("[update found]", file=sys.stderr, color="green")
+        for i in update:
+            print(f"  - {i}", file=sys.stderr)
+    if no_update:
+        termcolor.cprint("[no update found]", file=sys.stderr)
+        for i in no_update:
+            print(f"  - {i}", file=sys.stderr)
+    if first_fetch:
+        termcolor.cprint("[first fetch found]", file=sys.stderr, color="yellow")
+        for i in first_fetch:
+            print(f"  - {i}", file=sys.stderr)
