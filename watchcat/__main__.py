@@ -21,18 +21,21 @@ def main():
 
     with SqlStorage(args.db) as storage:
         for resource_id, resource in config.resources.items():
-            new_snapshot = resource.get()
-            old_snapshot = storage.get(resource_id)
-            storage.set(new_snapshot)
-            if old_snapshot is not None:
-                if diff_detector.has_update(old_snapshot, new_snapshot):
-                    message = f"{resource.title} has updated!\n{diff_detector.diff(old_snapshot, new_snapshot)}"
-                    resource.notifier.send(message)
-                    update.append(resource_id)
+            try:
+                new_snapshot = resource.get()
+                old_snapshot = storage.get(resource_id)
+                storage.set(new_snapshot)
+                if old_snapshot is not None:
+                    if diff_detector.has_update(old_snapshot, new_snapshot):
+                        message = f"{resource.title} has updated!\n{diff_detector.diff(old_snapshot, new_snapshot)}"
+                        resource.notifier.send(message)
+                        update.append(resource_id)
+                    else:
+                        no_update.append(resource_id)
                 else:
-                    no_update.append(resource_id)
-            else:
-                first_fetch.append(resource_id)
+                    first_fetch.append(resource_id)
+            except Exception as e:
+                print(e, file=sys.stderr)
 
     if update:
         termcolor.cprint("[update found]", file=sys.stderr, color="green")
