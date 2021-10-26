@@ -21,6 +21,7 @@ class HttpResource(Resource):
         title: Union[str, None] = None,
         auth: AuthBase = None,
         filters: List[Filter] = [],
+        wait: int = 1,
     ):
         """init
 
@@ -39,7 +40,7 @@ class HttpResource(Resource):
         auth : requests.auth.AuthBase
             認証情報
         """
-        super().__init__(resource_id, notifier, enabled, title or url, filters)
+        super().__init__(resource_id, notifier, enabled, title or url, filters, wait)
         self.url = url
         self.auth = auth
 
