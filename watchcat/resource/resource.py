@@ -1,6 +1,6 @@
+import time
 from typing import List, Union
 from watchcat.filter.filter import Filter
-
 from watchcat.notifier.notifier import Notifier
 
 
@@ -12,6 +12,7 @@ class Resource:
         enabled: bool = True,
         title: Union[str, None] = None,
         filters: List[Filter] = [],
+        wait: int = 1,
     ):
         """init
 
@@ -31,12 +32,14 @@ class Resource:
         self.enabled = enabled
         self.title = title
         self.filters = filters
+        self.wait = wait
 
-    def get(self):
+    def _get(self):
         raise NotImplementedError()
 
-    def get_filtered(self):
-        snapshot = self.get()
+    def get(self):
+        time.sleep(self.wait)
+        snapshot = self._get()
         for filter in self.filters:
             snapshot.content = filter.filter(snapshot.content)
         return snapshot

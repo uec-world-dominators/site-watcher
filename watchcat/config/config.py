@@ -138,6 +138,7 @@ class ConfigLoader:
         notifier = self._get_notifier(notifier_id)
         env = resource_config.get("env")
         cmd = resource_config.get("cmd")
+        wait = int(resource_config.get("wait") or 1)
         if auth_config := resource_config.get("auth"):
             auth = self._load_auth(auth_config)
         else:
@@ -160,6 +161,7 @@ class ConfigLoader:
                 title=title,
                 auth=auth,
                 filters=filters,
+                wait=wait,
             )
         elif cmd:
             return CommandResource(
@@ -170,6 +172,7 @@ class ConfigLoader:
                 enabled=enabled,
                 title=title,
                 filters=filters,
+                wait=wait,
             )
         else:
             raise NotImplementedError()

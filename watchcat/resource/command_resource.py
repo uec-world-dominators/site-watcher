@@ -19,6 +19,7 @@ class CommandResource(Resource):
         title: Union[str, None] = None,
         env: Dict[str, str] = dict(),
         filters: List[Filter] = [],
+        wait: int = 1,
     ):
         """init
 
@@ -37,7 +38,7 @@ class CommandResource(Resource):
         env : Dict[str, str], optional
             環境変数, by default dict()
         """
-        super().__init__(resource_id, notifier, enabled, title or cmd, filters)
+        super().__init__(resource_id, notifier, enabled, title or cmd, filters, wait)
         self.cmd = cmd
         self.env = env
 
@@ -45,7 +46,7 @@ class CommandResource(Resource):
         if self.title:
             return f"<CommandResource(resource_id={self.resource_id}, notifier={self.notifier}, title{self.title}, enabled={self.enabled}, title={self.title})>"
 
-    def get(self) -> Snapshot:
+    def _get(self) -> Snapshot:
         """コマンドを実行して返り値を取得
 
         Returns

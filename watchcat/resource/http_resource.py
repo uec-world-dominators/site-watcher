@@ -21,6 +21,7 @@ class HttpResource(Resource):
         title: Union[str, None] = None,
         auth: AuthBase = None,
         filters: List[Filter] = [],
+        wait: int = 1,
     ):
         """init
 
@@ -39,7 +40,7 @@ class HttpResource(Resource):
         auth : requests.auth.AuthBase
             認証情報
         """
-        super().__init__(resource_id, notifier, enabled, title or url, filters)
+        super().__init__(resource_id, notifier, enabled, title or url, filters, wait)
         self.url = url
         self.auth = auth
 
@@ -47,7 +48,7 @@ class HttpResource(Resource):
         if self.title:
             return f"<HttpResource(resource_id={self.resource_id}, notifier={self.notifier}, title={self.title}, enabled={self.enabled})>"
 
-    def get(self) -> Snapshot:
+    def _get(self) -> Snapshot:
         """url先のhtmlテキストを取得
 
         Returns
