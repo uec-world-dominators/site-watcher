@@ -47,7 +47,7 @@ class HttpResource(Resource):
         if self.title:
             return f"<HttpResource(resource_id={self.resource_id}, notifier={self.notifier}, title={self.title}, enabled={self.enabled})>"
 
-    def get(self) -> Snapshot:
+    def _get(self) -> Snapshot:
         """url先のhtmlテキストを取得
 
         Returns

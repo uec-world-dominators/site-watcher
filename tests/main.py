@@ -34,12 +34,12 @@ class Test(unittest.TestCase):
         title = "Google"
 
         http_resource = HttpResource(resource_id, notifier, url, title=title)
-        snapshot = http_resource.get()
+        snapshot = http_resource._get()
         assert snapshot.resource_id == resource_id
         assert http_resource.title == title
 
         http_resource2 = HttpResource(resource_id, notifier, url)
-        snapshot2 = http_resource2.get()
+        snapshot2 = http_resource2._get()
         assert snapshot2.resource_id == resource_id
         assert http_resource2.title == url
 
@@ -51,12 +51,12 @@ class Test(unittest.TestCase):
         title = "echo"
 
         command_resource = CommandResource(resource_id, notifier, cmd, env={"var": "hoge"}, title=title)
-        snapshot = command_resource.get()
+        snapshot = command_resource._get()
         assert snapshot.resource_id == resource_id
         assert command_resource.title == title
 
         command_resource2 = CommandResource(resource_id, notifier, cmd, env={"var": "hoge"})
-        snapshot2 = command_resource2.get()
+        snapshot2 = command_resource2._get()
         assert snapshot2.resource_id == resource_id
         assert command_resource2.title == cmd
 

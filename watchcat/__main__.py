@@ -22,7 +22,7 @@ def main():
     with SqlStorage(args.db) as storage:
         for resource_id, resource in config.resources.items():
             try:
-                new_snapshot = resource.get_filtered()
+                new_snapshot = resource.get()
                 old_snapshot = storage.get(resource_id)
                 storage.set(new_snapshot)
                 if old_snapshot is not None:
