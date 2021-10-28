@@ -13,6 +13,7 @@ from watchcat.config.errors import (
 from watchcat.filter.command import CommandFilter
 from watchcat.filter.css_selector import CssSelectorFilter
 from watchcat.filter.filter import Filter
+from watchcat.filter.textcontent import TextContentFilter
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.file import FileNotifier
 from watchcat.notifier.notifier import Notifier
@@ -227,6 +228,8 @@ class ConfigLoader:
                     return CssSelectorFilter(filter_config["selector"])
                 elif _type == "cmd":
                     return CommandFilter(filter_config["cmd"])
+                elif _type == "text":
+                    return TextContentFilter()
                 else:
                     raise ConfigLoadError(f"Unsupported filter type")
             except KeyError as e:
