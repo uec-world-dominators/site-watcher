@@ -67,3 +67,6 @@ class CommandResource(Resource):
             return snapshot
         else:
             raise GetError()
+
+    def description(self) -> str:
+        return self.cmd
