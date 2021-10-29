@@ -13,9 +13,11 @@ from watchcat.config.errors import (
 from watchcat.filter.command import CommandFilter
 from watchcat.filter.css_selector import CssSelectorFilter
 from watchcat.filter.filter import Filter
+from watchcat.filter.textcontent import TextContentFilter
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.file import FileNotifier
 from watchcat.notifier.notifier import Notifier
+from watchcat.notifier.slack_bot import SlackBotNotifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
@@ -100,6 +102,10 @@ class ConfigLoader:
             if notifier_type == "slack":
                 webhook_url = notifier_config["webhook"]
                 return SlackWebhookNotifier(notifier_id, webhook_url)
+            elif notifier_type == "slackbot":
+                token = notifier_config["token"]
+                channel = notifier_config["channel"]
+                return SlackBotNotifier(notifier_id, token, channel)
             elif notifier_type == "cmd":
                 command = notifier_config["cmd"]
                 return CommandNotifier(notifier_id, command)
@@ -227,6 +233,8 @@ class ConfigLoader:
                     return CssSelectorFilter(filter_config["selector"])
                 elif _type == "cmd":
                     return CommandFilter(filter_config["cmd"])
+                elif _type == "text":
+                    return TextContentFilter()
                 else:
                     raise ConfigLoadError(f"Unsupported filter type")
             except KeyError as e:

@@ -71,3 +71,6 @@ class HttpResource(Resource):
             print(response.status_code, file=sys.stderr)
             print(response.text, file=sys.stderr)
             raise GetError()
+
+    def description(self) -> str:
+        return self.url

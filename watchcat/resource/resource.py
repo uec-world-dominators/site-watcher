@@ -43,3 +43,6 @@ class Resource:
         for filter in self.filters:
             snapshot.content = filter.filter(snapshot.content)
         return snapshot
+
+    def description(self) -> str:
+        raise NotImplementedError()
