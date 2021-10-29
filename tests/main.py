@@ -14,6 +14,7 @@ from watchcat.config.config import ConfigLoader
 from watchcat.config.errors import ConfigEmptyError, ConfigVersionMissmatchError
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
+from watchcat.notifier.slack_bot import SlackBotNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
@@ -63,6 +64,12 @@ class Test(unittest.TestCase):
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
         slack = SlackWebhookNotifier("slack1", webhook_url=webhook_url)
+        slack.send(f"this is test message from {watchcat.info.name}", "description", "+ hoge\n- hoge")
+
+    def test_slack_bot(self):
+        token = os.environ["SLACK_TOKEN"]
+        channel = os.environ["SLACK_CHANNEL"]
+        slack = SlackBotNotifier("slack1", token, channel)
         slack.send(f"this is test message from {watchcat.info.name}", "description", "+ hoge\n- hoge")
 
     def test_command_notifier(self):
