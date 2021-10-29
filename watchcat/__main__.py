@@ -27,8 +27,11 @@ def main():
                 storage.set(new_snapshot)
                 if old_snapshot is not None:
                     if diff_detector.has_update(old_snapshot, new_snapshot):
-                        message = f"{resource.title} has updated!\n{diff_detector.diff(old_snapshot, new_snapshot)}"
-                        resource.notifier.send(message)
+                        resource.notifier.send(
+                            f"{resource.title} has updated!",
+                            resource.description(),
+                            diff_detector.diff(old_snapshot, new_snapshot),
+                        )
                         update.append(resource_id)
                     else:
                         no_update.append(resource_id)

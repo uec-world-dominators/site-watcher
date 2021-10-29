@@ -63,12 +63,14 @@ class Test(unittest.TestCase):
     def test_slack_webhook(self):
         webhook_url = os.environ["SLACK_WEBHOOK_URL"]
         slack = SlackWebhookNotifier("slack1", webhook_url=webhook_url)
-        slack.send(f"this is test message from {watchcat.info.name}")
+        slack.send(f"this is test message from {watchcat.info.name}", "description", "+ hoge\n- hoge")
 
     def test_command_notifier(self):
-        command = "echo $message"
+        command = "echo $diff"
         notifier = CommandNotifier("command1", command=command)
-        ret = notifier.send(f"[test_command_notifier] this is test message from {watchcat.info.name}")
+        ret = notifier.send(
+            f"[test_command_notifier] this is test message from {watchcat.info.name}", "description", "diff"
+        )
         assert ret == 0
 
     def test_create_snapshot(self):

@@ -8,8 +8,10 @@ class CommandNotifier(Notifier):
         super().__init__(_id)
         self.command = command
 
-    def send(self, message: str):
-        process = subprocess.run(self.command, shell=True, check=True, env={"message": message})
+    def send(self, title: str, description: str, diff: str):
+        process = subprocess.run(
+            self.command, shell=True, check=True, env={"title": title, "description": description, "diff": diff}
+        )
         return process.returncode
 
     def __str__(self) -> str:
