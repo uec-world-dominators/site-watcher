@@ -144,7 +144,7 @@ class ConfigLoader:
         notifier = self._get_notifier(notifier_id)
         env = resource_config.get("env")
         cmd = resource_config.get("cmd")
-        encoding = resource_config.get("encoding", "utf-8")
+        encoding = resource_config.get("encoding")
         wait = int(resource_config.get("wait") or 1)
         if auth_config := resource_config.get("auth"):
             auth = self._load_auth(auth_config)
