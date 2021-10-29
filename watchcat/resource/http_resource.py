@@ -22,6 +22,7 @@ class HttpResource(Resource):
         auth: AuthBase = None,
         filters: List[Filter] = [],
         wait: int = 1,
+        encoding: str = "utf-8",
     ):
         """init
 
@@ -43,6 +44,7 @@ class HttpResource(Resource):
         super().__init__(resource_id, notifier, enabled, title or url, filters, wait)
         self.url = url
         self.auth = auth
+        self.encoding = encoding
 
     def __str__(self) -> str:
         if self.title:
@@ -63,7 +65,7 @@ class HttpResource(Resource):
         """
         response = requests.get(self.url, auth=self.auth)
         if response.status_code == 200:
-            text = response.text
+            text = response.content.decode(self.encoding)
             timestamp = time.time()
             snapshot = Snapshot(self.resource_id, timestamp, text)
             return snapshot
