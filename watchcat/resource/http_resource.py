@@ -3,6 +3,7 @@ import time
 from typing import List, Union
 
 import requests
+import bs4
 from requests.auth import AuthBase
 from watchcat.filter.filter import Filter
 from watchcat.notifier.notifier import Notifier
@@ -65,8 +66,7 @@ class HttpResource(Resource):
         """
         response = requests.get(self.url, auth=self.auth)
         if response.status_code == 200:
-            if self.encoding is not None:
-                response.encoding = self.encoding
+            response.encoding = self._determine_encoding(response)
             text = response.text
             timestamp = time.time()
             snapshot = Snapshot(self.resource_id, timestamp, text)
@@ -75,6 +75,25 @@ class HttpResource(Resource):
             print(response.status_code, file=sys.stderr)
             print(response.text, file=sys.stderr)
             raise GetError()
+
+    def _determine_encoding(self, res: requests.Response) -> str:
+        # force
+        if self.encoding:
+            return self.encoding
+
+        # check header
+        if res.headers.get("content-type").find("charset=") > -1:
+            return res.encoding
+
+        # use meta charset
+        doc = bs4.BeautifulSoup(res.content, "html.parser")
+        meta_charset = doc.select_one("meta[charset]")
+        if meta_charset:
+            if charset := meta_charset.get("charset"):
+                return charset
+
+        # use chardet
+        return res.apparent_encoding
 
     def description(self) -> str:
         return self.url
