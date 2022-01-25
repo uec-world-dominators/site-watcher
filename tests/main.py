@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(TEST_DIR))
 import os.path
 import time
 import unittest
+import requests
 
 import watchcat.__main__
 import watchcat.info
@@ -15,6 +16,7 @@ from watchcat.config.errors import ConfigEmptyError, ConfigVersionMissmatchError
 from watchcat.notifier.command import CommandNotifier
 from watchcat.notifier.slack_webhook import SlackWebhookNotifier
 from watchcat.notifier.slack_bot import SlackBotNotifier
+from watchcat.notifier.file import FileNotifier
 from watchcat.resource.command_resource import CommandResource
 from watchcat.resource.http_resource import HttpResource
 from watchcat.snapshot import Snapshot
@@ -159,6 +161,22 @@ class FilterTest(unittest.TestCase):
         _in = '<html><body><div id="hoge"></div></body></html>'
         out = filter.filter(_in)
         self.assertEqual(out, '<div id="hoge"></div>')
+
+
+class EncodingTest(unittest.TestCase):
+    def test_meta_charset(self):
+        url = "http://www.hpc.is.uec.ac.jp/jikken2/2021webpage.html"
+        notifier = FileNotifier("test", "/dev/stdout")
+        resource = HttpResource("test", notifier, url)
+        charset = resource._determine_encoding(requests.get(url))
+        assert charset == "UTF-8"
+
+    def test_content_type_header(self):
+        url = "https://stackoverflow.com/"
+        notifier = FileNotifier("test", "/dev/stdout")
+        resource = HttpResource("test", notifier, url)
+        charset = resource._determine_encoding(requests.get(url))
+        assert charset == "utf-8"
 
 
 if __name__ == "__main__":
