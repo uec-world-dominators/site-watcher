@@ -18,7 +18,6 @@ setuptools.setup(
     name=watchcat.info.name,
     packages=setuptools.find_packages(),
     version=watchcat.info.version,
-    license=license,
     install_requires=_requirements(),
     author=",".join(watchcat.info.authors),
     url="https://github.com/uec-world-dominators/watchcat",
